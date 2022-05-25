@@ -4,6 +4,7 @@
 #include <pthread.h>
 #include <stdbool.h>
 #include <string.h>
+#include <time.h>
 
 bool isLogged = false;
 bool isActive = true;
@@ -25,6 +26,23 @@ bool isPasswordValid (char * accountPassword,  char * currentPassword) {
 
 void clearNameLogged(){
 	sprintf(nameLogged, "%s", "");
+}
+
+const char *  getRandomAnime(){
+	srand(time(NULL));
+	int r = rand() % 100;
+	FILE *fptr;
+	char currentAnime [128] = "";
+	static char randomAnime [128] = "";
+	fptr = fopen("Animes.txt", "r");
+	for(int i = 0; i <= 99; i++){
+		fgets(currentAnime, 128, fptr);
+		if(i == r){
+			strcpy(randomAnime, currentAnime);
+		}
+	}
+	fclose(fptr);
+	return randomAnime;
 }
 //End Auxiliar function
 
@@ -176,6 +194,19 @@ void clearNameLogged(){
 	}
 //End Login Function
 
+//Start Forca Game - Jogo 1
+	void callForca(){
+		clear();
+		//pthread_t thread_id;
+	  char * string = getRandomAnime();
+		printf("%s\n", string);
+		
+		
+	  //pthread_create(&thread_id, NULL, autenticateLogin, (void *)string);
+	  //pthread_join(thread_id, NULL);
+	}
+//End Forca Game - Jogo 1
+
 int main(void) {
 	clear();
 	char option [20];
@@ -211,9 +242,11 @@ int main(void) {
 				main();
 			}
 		} else if (option[0] == '3'){
-			//
+			//callForca
+			//printf("%s\n",getRandomAnime());
+			callForca();
 		} else if (option[0] == '4'){
-			//
+			//callRogerio
 		} else if (option[0] == '5'){
 			//call exit
 			isActive = false;
