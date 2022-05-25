@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <pthread.h>
+#include <stdbool.h>
+#include <string.h>
+
+void *myfunc(void *arg)
+{
+  printf("Running thread...");
+
+  int *num = (int *) arg;
+  *num = 100;
+
+  return NULL;
+}
+
+int main(void) {
+  pthread_t thread_id;
+
+  int number;
+  pthread_create(&thread_id, NULL, myfunc, (void *)&number);
+  pthread_join(thread_id, NULL);
+
+  printf("\nAfter thread\n");
+  printf("%d", number);
+}
