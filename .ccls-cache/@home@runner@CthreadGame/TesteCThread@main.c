@@ -15,20 +15,25 @@ void clear () {
 	system("clear"); 
 }
 
-bool isAccountValid (char * name) {
-	return (fopen(strcat(name, ".txt"), "r") == NULL) ? true : false;
+bool isAccountValid (char * auxname) {
+	return (fopen(strcat(auxname, ".txt"), "r") == NULL) ? true : false;
 }
 
 bool isPasswordValid (char * accountPassword,  char * currentPassword) {
-	printf("%s\n", accountPassword);
+	return (strcmp(accountPassword, currentPassword) == 0 ? true : false);
+}
+
+void clearNameLogged(){
+	sprintf(nameLogged, "%s", "");
 }
 //End Auxiliar function
 
 //Star SignUp Function
 	void *signUp(void *arg) {
-	  char name[128];
-		char tempname[128];
-	  char password[128];
+	  char name[128] = "";
+		char auxname[128] = "";
+		char tempname[128] = "";
+	  char password[128] = "";
 	  int count = 0;
 	  bool flag = false;
 	
@@ -49,6 +54,7 @@ bool isPasswordValid (char * accountPassword,  char * currentPassword) {
 	    }
 		}
 		strcat(tempname, name);
+		strcat(auxname, name);
 		if(isAccountValid(name)){
 			FILE *fptr;
 			fptr = fopen(name, "w+");
@@ -95,9 +101,10 @@ bool isPasswordValid (char * accountPassword,  char * currentPassword) {
 
 //Star Login Function
 	void *autenticateLogin(void *arg) {
-	  char name[128];
-		char tempname[128];
-	  char password[128];
+	  char name[128] = "";
+		char auxname[128] = "";
+		char tempname[128] = "";
+	  char password[128] = "";
 	  int count = 0;
 	  bool flag = false;
 	
@@ -117,18 +124,17 @@ bool isPasswordValid (char * accountPassword,  char * currentPassword) {
 	      }
 	    }
 		}
+		printf("%s\n", name);
+		strcat(auxname, name);
 		strcat(tempname, name);
-		if(!isAccountValid(name)){
-			char currentPassword;
+		if(!isAccountValid(auxname)){
 			FILE *fptr;
-			fptr = fopen(name, "r");
-
-			currentPassword = fgetc(fptr);
-			
+			char currentPassword [128];
+			fptr = fopen(auxname, "r");
+			fgets(currentPassword, 128, fptr);
 			fclose(fptr);
-			printf("%s \n", &currentPassword);
 			
-			if(isPasswordValid(&currentPassword, password)){	
+			if(isPasswordValid(currentPassword, password)){	
 				printf("Login realizado com sucesso.\n");
 				strcat(nameLogged, tempname);
 				isLogged = true;
@@ -141,7 +147,7 @@ bool isPasswordValid (char * accountPassword,  char * currentPassword) {
 	}
 	
 	void callLogin(){
-		//clear();
+		clear();
 		pthread_t thread_id;
 	  char string[30] = "default";
 		char stringPassword[30] = "default";
@@ -171,7 +177,7 @@ bool isPasswordValid (char * accountPassword,  char * currentPassword) {
 //End Login Function
 
 int main(void) {
-	//clear();
+	clear();
 	char option [20];
 	if(isActive){	
 		if(isLogged){
@@ -188,12 +194,22 @@ int main(void) {
 		fgets(option, 20, stdin);
 		if(option[0] == '1'){
 			//call login
-			callLogin();
-			main();
+			if(!isLogged){
+				callLogin();
+				main();
+			} else {
+				printf("Você deslogado para logar.");
+				main();
+			}
 		} else if (option[0] == '2'){
 			//call signUp
-			callSignUp();
-			main();
+			if(!isLogged){
+				callSignUp();
+				main();
+			} else {
+				printf("Você deslogado para criar uma conta nova.");
+				main();
+			}
 		} else if (option[0] == '3'){
 			//
 		} else if (option[0] == '4'){
@@ -207,9 +223,12 @@ int main(void) {
 			if(isLogged){
 				// call Logout func
 				isLogged = false;
+				clearNameLogged();
+				main();
 			} else {
 				//false
 				printf("Você precisa estar logado para poder deslogar.");
+				main();
 			}
 		} else {
 			printf("Digite uma opção válida.");
