@@ -411,10 +411,10 @@ void phaseTwo(){
   }
 }
 
-void phaseOne(){
+void *phaseOne(void *arg){
   
   clear();
-  
+  //printf("c", (char *)arg);
   //printf("CHECKPOINT %d\n\n", checkpoint);
   //printf("COUNTER %d\n\n", counter);
   //printf("AMENDOUS %d\n\n", Amendous);
@@ -436,7 +436,7 @@ void phaseOne(){
     clear();
     printf("You are really boring, just sleeps, you don't deserve this adventure!\n");
     sleep(5);
-    phaseOne();
+    phaseOne(checkpoint);
     //kill();
     }
   else if(option[0] == '1'){
@@ -445,7 +445,7 @@ void phaseOne(){
     printf("\nYou continues to sleep \nYou just woke up in the morning and it's all right, you survived one more day, congratulations!\nYou have worked so hard in your day, now it's time to sleep again.\n");
     counter = counter + 1;
     sleep(3);
-    phaseOne();
+    phaseOne(checkpoint);
     
   }
     
@@ -499,6 +499,7 @@ void phaseOne(){
         checkpoint = 2;
         printf("\nYou really went to this? Kill the enemy attacking from the back? Well, it's your life, you survived and killed the thief, Congratulations! You've won the Thief Arc\n");
         sleep(3);
+        //haseOne(checkpoint);
       }
     }
     else{
@@ -506,7 +507,7 @@ void phaseOne(){
       sleep(10);
       
       clear();
-      phaseOne();
+      phaseOne(checkpoint);
       //usleep(100);
     }
     
@@ -518,7 +519,7 @@ void phaseOne(){
     if(op3 == true){
       printf("\nYou've already checked the news!\n");
       sleep(3);
-      phaseOne();
+      phaseOne(checkpoint);
     }
     printf("\nIn the News: General BlackOut in the City! Prepare your backup lights \nDo You want to take your flashLight? \n 1 - Yes \n 2 - No\n\n");
     fgets(option3, 4, stdin);
@@ -529,11 +530,11 @@ void phaseOne(){
       //system("clear");
       sleep(3);
       flashlight = true;
-      phaseOne();
+      phaseOne(checkpoint);
     }
     else if(option3[0] == '2'){
       op3 = true;
-      phaseOne();
+      phaseOne(checkpoint);
     }
     
   }
@@ -550,13 +551,13 @@ void phaseOne(){
       printf("\nPlease be carefull\n");
       Amendous = true;
       sleep(2);
-      phaseOne();
+      phaseOne(checkpoint);
     }
     else if(option4[0] == '2'){
       Amendous = false;
       printf("\nPlease be extremely carefull\n");
       sleep(2);
-      phaseOne();  
+      phaseOne(checkpoint);  
     }
     else if(option4[0] == '3'){
       //134340 
@@ -566,14 +567,14 @@ void phaseOne(){
         Amendous = true; 
         printf("\nGreat to hear that you believe in it!\n");
         sleep(2);
-        phaseOne();
+        phaseOne(checkpoint);
            
       }
       else{
         Amendous = false;
         printf("\nPlease be extremely carefull\n");
         sleep(2);
-        phaseOne();
+        phaseOne(checkpoint);
       }
     }
     
@@ -581,6 +582,12 @@ void phaseOne(){
 }
 
 void callAmendous(){
+  pthread_t thread_id;
+	char * string = nameLogged;
+	printf("%s\n", string);
+
+	pthread_create(&thread_id, NULL, phaseOne, (void *)string);
+	pthread_join(thread_id, NULL);
 
   Amendous = false;
   counter = 0;
@@ -591,7 +598,7 @@ void callAmendous(){
   if(checkpoint == 2){
     printf("\nYou've already won the game in the Thief Arc, try other answers to beat another arc!\n");
     sleep(7);
-    phaseOne();
+    phaseOne(checkpoint);
   }
   else if(checkpoint == 0){
     printf("\nThis is a choise based game, depending in what you choose the history can change\n\n\n");
@@ -599,18 +606,15 @@ void callAmendous(){
     
     clear();
     
-    phaseOne();
+    phaseOne(checkpoint);
     //phaseTwo();
-  }
-  else if(checkpoint == 4){
-    phaseTwo();
   }
    else if(checkpoint == 5){
      printf("\nYou've already won the game in the Witch Arc, try other answers to beat another arc!\n");
     sleep(7);
     
     clear();
-    phaseOne();
+    phaseOne(checkpoint);
   }
   
 }
@@ -628,7 +632,7 @@ int main(void) {
 		printf("1 - Login \n");
 		printf("2 - Cadastro \n");
 		printf("3 - Jogo 1 - Jogo da Forca\n");
-		printf("4 - Jogo 2 - Jogo do Augusto \n");
+		printf("4 - Jogo 2 - Jogo Amendous \n");
 		printf("5 - Sair \n");
 		printf("6 - Logout \n");
 	
